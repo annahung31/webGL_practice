@@ -8,7 +8,8 @@ This practice is based on Homework 1 of ICG@NTU.
 
 
 ## Code Notes
-'''
+
+    '''
     function initShaders() {
         var fragmentShader = getShader(gl, "fragmentShader"); //初始化摻數
         var vertexShader   = getShader(gl, "vertexShader");
@@ -17,14 +18,16 @@ This practice is based on Homework 1 of ICG@NTU.
         gl.attachShader(shaderProgram, vertexShader);
         gl.attachShader(shaderProgram, fragmentShader);
         gl.linkProgram(shaderProgram);
-'''
 
-'''
+    '''
+
+    '''
         shaderProgram.pMatrixUniform  = gl.getUniformLocation(shaderProgram, "uPMatrix");   
         // 做transform matrix的時候需要用到
-'''
+    '''
 
-'''
+
+    '''
         // Setup Projection Matrix  
         mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix); // FOV=45 degree
 
@@ -39,9 +42,9 @@ This practice is based on Homework 1 of ICG@NTU.
         //矩陣相乘的順序會影響結果
         //scale: 改變大小
         setMatrixUniforms();
-'''
+    '''
 
-'''
+    '''
     function animate() {
         var timeNow = new Date().getTime();
         if (lastTime != 0) {
@@ -51,12 +54,12 @@ This practice is based on Homework 1 of ICG@NTU.
         
         lastTime = timeNow;
     }
-'''
+    '''
 
-'''
+    '''
     function tick() {
         requestAnimFrame(tick);
         drawScene();  //對剛才抓出來的所有attribute 跟 matrix 做設定
         animate();
     }
-'''
+    '''
