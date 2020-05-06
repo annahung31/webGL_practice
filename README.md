@@ -105,7 +105,7 @@ gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute,
                         0);
 ```
 
-==== 在 shader 中 計算顏色 ====
+
 4. Gouraud shading 會需要有三種光源： amnient + diffuse + specular，在做這三種光源之前，會需要四個單位向量：
     - V: 物體看向相機(眼睛) 的向量 = 相機看向物體的反向。 (-mvMatrix)
     - N: 就是 mvNormal 
