@@ -199,9 +199,8 @@
 
         // Setup Model-View Matrix
         mat4.identity(mvMatrix);
-        mat4.translate(mvMatrix, [0, 0, -40]);
+        mat4.translate(mvMatrix, [0, 0, -80]);
         mat4.rotate(mvMatrix, degToRad(teapotAngle), [0, 1, 0]);
-
         setMatrixUniforms();
 
         // Setup teapot position data
@@ -223,6 +222,24 @@
                                0);
 
         gl.drawArrays(gl.TRIANGLES, 0, teapotVertexPositionBuffer.numItems);
+
+
+        // Setup Model-View Matrix
+        mat4.identity(mvMatrix);
+        mat4.translate(mvMatrix, [40, 0, -80]);
+        mat4.rotate(mvMatrix, degToRad(teapotAngle), [0, 1, 0]);
+        setMatrixUniforms();
+        gl.drawArrays(gl.TRIANGLES, 0, teapotVertexPositionBuffer.numItems);
+
+
+        // Setup Model-View Matrix
+        mat4.identity(mvMatrix);
+        mat4.translate(mvMatrix, [-40, 0, -80]);
+        mat4.rotate(mvMatrix, degToRad(teapotAngle), [0, 1, 0]);
+        setMatrixUniforms();
+        gl.drawArrays(gl.TRIANGLES, 0, teapotVertexPositionBuffer.numItems);
+
+
     }
 
     function animate() {
