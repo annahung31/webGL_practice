@@ -63,3 +63,26 @@ This practice is based on Homework 1 of ICG@NTU.
         animate();
     }
     '''
+
+
+    做 transform 的時候， code 由上到下 ，對應 matrix 由左至右。
+
+    function `handleLoadedTeapot` 中， 藉由以下部分讀取 vertex normal
+    '''
+        teapotVertexPositionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, teapotVertexPositionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(teapotData.vertexPositions), gl.STATIC_DRAW);
+        teapotVertexPositionBuffer.itemSize = 3;
+        teapotVertexPositionBuffer.numItems = teapotData.vertexPositions.length / 3;
+
+    '''
+
+    ### Gouraud shading
+    1. 修改 `vertexShader`
+    2. 作法：把三角形三頂點的顏色計算出來，中間的顏色是由三頂點顏色內差。
+    3. 會把內差結果傳給 `fragmentShader`
+    Q: 為什麼在`vertexShader` 打光，最後出來的結果是Gouraud shading？
+
+
+    1. 在 `vertexShader` 中 增加一個 attribute:
+    ''' attribute vec3 aVertexNormal; '''
