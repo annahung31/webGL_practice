@@ -32,17 +32,58 @@
     only Teapot.json has extra attribute "vertexTextureCoords"
     which is used for texture mappping.
  -->
-<script id="vertexShader" type="vertex">
+<script id="vertexShader" type="vertex">  
     attribute vec3 aVertexPosition;
     attribute vec3 aFrontColor;
-
+    attribute vec3 aVertexNormal;
+    
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
 
 	varying vec4 fragcolor;
 
     void main(void) {
-        fragcolor = vec4(aFrontColor.rgb, 1.0);
+        //需要知道光源位置,顏色
+        vec3 light = vec3(30,20,-25);  //放在右邊，從上面照
+        vec3 lightColor = vec3(1.0);  //白色光
+
+
+        
+        vec3 mvVertex = (uMVMatrix * vec4(aVertexPosition, 1.0)).xyz; // vertex 是在物體座標，要轉換成 world 座標
+        
+        mat3 normalMatrix = mat3(uMVMatrix); //會自動抓左上角3x3
+        vec3 mvNormal = (normalMatrix * aVertexNormal); //得到轉換後的vertex normal
+        //Normal 不會被 translation跟scale 所影響，所以只要做左上角3x3
+
+
+
+        // V,N,L,H (都要是單位向量)
+        vec3 V = -normalize(mvVertex);
+        vec3 N = normalize(mvNormal);
+        vec3 L = normalize(light - mvVertex);
+        vec3 H = normalize(L+V);
+    
+        //參數可以自由調整，表示三種light 的比重
+        float ka = 0.1;
+        float kd = 0.6;
+        float ks = 0.3;
+        
+        // gouraud = ambient + diffuse + specular （需要三種光源）
+        vec3 ambient = lightColor * ka * aFrontColor;
+
+        float cos = max(dot(L, N), 0.0); // 得到 L 和 N 的夾角。避免負數
+        vec3 diffuse = lightColor * kd * aFrontColor * cos;
+
+        float cosAlpha = max(dot(H, N), 0.0);
+        vec3 specular = lightColor * ks * pow(cosAlpha, 16.0); //次方可以自己調整
+        if(dot(L, N)<0.0){
+            specular = vec3(0.0);
+        }
+
+        vec3 gouraud =  vec3(0.0); //把vector 三個數值都設為0
+        gouraud = ambient + diffuse + specular;
+
+        fragcolor = vec4(gouraud, 1.0);
         gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
     }
 </script>
@@ -134,6 +175,13 @@
         shaderProgram.vertexFrontColorAttribute = gl.getAttribLocation(shaderProgram, "aFrontColor");
         gl.enableVertexAttribArray(shaderProgram.vertexFrontColorAttribute);
 
+
+        // G
+        shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
+        gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+
+
+
         shaderProgram.pMatrixUniform  = gl.getUniformLocation(shaderProgram, "uPMatrix");
         shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
     }
@@ -221,23 +269,20 @@
                                0, 
                                0);
 
+
+        // Setup teapot vertex data
+        gl.bindBuffer(gl.ARRAY_BUFFER, teapotVertexNormalBuffer);
+        gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 
+                               teapotVertexNormalBuffer.itemSize, 
+                               gl.FLOAT, 
+                               false, 
+                               0, 
+                               0);
+
+
         gl.drawArrays(gl.TRIANGLES, 0, teapotVertexPositionBuffer.numItems);
 
 
-        // Setup Model-View Matrix
-        mat4.identity(mvMatrix);
-        mat4.translate(mvMatrix, [40, 0, -80]);
-        mat4.rotate(mvMatrix, degToRad(teapotAngle), [0, 1, 0]);
-        setMatrixUniforms();
-        gl.drawArrays(gl.TRIANGLES, 0, teapotVertexPositionBuffer.numItems);
-
-
-        // Setup Model-View Matrix
-        mat4.identity(mvMatrix);
-        mat4.translate(mvMatrix, [-40, 0, -80]);
-        mat4.rotate(mvMatrix, degToRad(teapotAngle), [0, 1, 0]);
-        setMatrixUniforms();
-        gl.drawArrays(gl.TRIANGLES, 0, teapotVertexPositionBuffer.numItems);
 
 
     }

@@ -87,3 +87,32 @@ Q: 為什麼在`vertexShader` 打光，最後出來的結果是Gouraud shading�
 ```
 attribute vec3 aVertexNormal; 
 ```
+2. 在 `initShaders` 中提取這個attribute:
+```
+shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "aVertexNormal");
+gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+```
+
+3. 在 `drawScene` 中設定 Vertex data:
+```
+// Setup teapot vertex data
+gl.bindBuffer(gl.ARRAY_BUFFER, teapotVertexNormalBuffer);
+gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 
+                        teapotVertexNormalBuffer.itemSize, 
+                        gl.FLOAT, 
+                        false, 
+                        0, 
+                        0);
+```
+
+==== 在 shader 中 計算顏色 ====
+4. Gouraud shading 會需要有三種光源： amnient + diffuse + specular，在做這三種光源之前，會需要四個單位向量：
+    - V: 物體看向相機(眼睛) 的向量 = 相機看向物體的反向。 (-mvMatrix)
+    - N: 就是 mvNormal 
+    - L: lighting, 從物體看向光源。光源位置 - 物體位置
+    - H: 用於 specular light。 是 L + V
+    * specular light 中，有一個 alpha 角，是 R 與 V 的夾角，其中 R 是反射角。我們用 H 跟 N 的夾角來近似 alpha 值。
+
+    (講義： halfway vector)
+    
+    因為 specular light 中， H, N 夾角其實有可能 < 0, 但我們省略了，所以起來會有點奇怪。
