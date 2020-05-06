@@ -9,6 +9,7 @@ This practice is based on Homework 1 of ICG@NTU.
 
 ## Code Notes
 
+```
 function initShaders() {
     var fragmentShader = getShader(gl, "fragmentShader"); //初始化摻數
     var vertexShader   = getShader(gl, "vertexShader");
@@ -38,9 +39,9 @@ function initShaders() {
     //矩陣相乘的順序會影響結果
     //scale: 改變大小
     setMatrixUniforms();
+```
 
-
-
+```
 function animate() {
     var timeNow = new Date().getTime();
     if (lastTime != 0) {
@@ -50,29 +51,28 @@ function animate() {
     
     lastTime = timeNow;
 }
+```
 
-
-
+```
 function tick() {
     requestAnimFrame(tick);
     drawScene();  //對剛才抓出來的所有attribute 跟 matrix 做設定
     animate();
 }
-
+```
 
 
 * 做 transform 的時候， code 由上到下 ，對應 matrix 由左至右。
 
 * function `handleLoadedTeapot` 中， 藉由以下部分讀取 vertex normal
 
-
-
+```
 teapotVertexPositionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, teapotVertexPositionBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(teapotData.vertexPositions), gl.STATIC_DRAW);
 teapotVertexPositionBuffer.itemSize = 3;
 teapotVertexPositionBuffer.numItems = teapotData.vertexPositions.length / 3;
-
+```
   
 
 
