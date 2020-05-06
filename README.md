@@ -116,3 +116,11 @@ gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute,
     (講義： halfway vector)
     
     因為 specular light 中， H, N 夾角其實有可能 < 0, 但我們省略了，所以起來會有點奇怪。
+
+
+
+
+
+## Reference
+[WebGL interactive models]
+http://www.ibiblio.org/e-notes/webgl/models.htm 
