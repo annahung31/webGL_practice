@@ -81,6 +81,18 @@ teapotVertexPositionBuffer.numItems = teapotData.vertexPositions.length / 3;
 2. 作法：把三角形三頂點的顏色計算出來，中間的顏色是由三頂點顏色內差。
 3. 會把內差結果傳給 `fragmentShader`
 Q: 為什麼在`vertexShader` 打光，最後出來的結果是Gouraud shading？
+A: `vertexShader` 處理的是每個頂點最後會出現在螢幕上的哪個位置（gl_position）。不會知道是要畫出三角形。
+`fragmentShader` 處理的是每個pixel的顏色。(gl_fragColor)
+在 rendering pipeline中，最先處理 vertex processer，等到 clipper 決定哪些pixel 位在三角形裡面，然後依序用內差法得到三角形內每個pixel的顏色，存在 fragColor並且傳給 fragmentShader，完成render。
+
+所以，以此類推，如何做 Phong shading？
+1. 在三角形裡面，用三個頂點的normal 做內差(Rasterizer會自動做內差)，再給每個pixel做顏色計算。
+
+-> 把`vertexShader`的各個變數用 varying的方式傳給 `fragmentShader`，在`fragmentShader`裡面再做三個 light 的計算。
+
+
+
+
 
 
 1. 在 `vertexShader` 中 增加一個 attribute:
@@ -115,7 +127,15 @@ gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute,
 
     (講義： halfway vector)
     
-    因為 specular light 中， H, N 夾角其實有可能 < 0, 但我們省略了，所以起來會有點奇怪。
+    Gouraud shading 的結果，當物體旋轉時，會看到一閃一閃的光，
+    原因有二：
+    1. 三角形太大了
+    2. 因為計算顏色時，是以三角形頂點顏色做內差，所以假如一個 specular 亮點剛好位在三角形中間，那它就不會被畫出來。
+    如果改成用 phone shading 就會比較smooth一點。
+
+
+* 如果要用多盞光源，可以用for 迴圈分別計算三種光源的特性。但要注意的是，ambient light 不管光源有多少盞都是定值，不能多重加總。因為 ambient light 本來就是用來模擬光經過多重反射後的結果。
+
 
 
 
