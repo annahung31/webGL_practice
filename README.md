@@ -139,7 +139,7 @@ gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute,
 
 ## Result
 三種 shading 比較：
-![image](shadings.png)
+![image](shading.png)
 
 
 
