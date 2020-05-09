@@ -41,7 +41,7 @@
     uniform mat4 uPMatrix;
 
 	varying vec4 fragcolor;
-
+    
     void main(void) {
         //需要知道光源位置,顏色
         vec3 light = vec3(30,20,-25);  //放在右邊，從上面照
@@ -246,9 +246,11 @@
         mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
 
         // Setup Model-View Matrix
+        
         mat4.identity(mvMatrix);
         mat4.translate(mvMatrix, [0, 0, -80]);
         mat4.rotate(mvMatrix, degToRad(teapotAngle), [0, 1, 0]);
+        mat4.scale(mvMatrix, [1,2,1]);
         setMatrixUniforms();
 
         // Setup teapot position data
