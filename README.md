@@ -141,9 +141,3 @@ gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute,
 三種 shading 比較：
 ![image](shading.png)
 
-
-
-
-## Reference
-[WebGL interactive models]
-http://www.ibiblio.org/e-notes/webgl/models.htm 
