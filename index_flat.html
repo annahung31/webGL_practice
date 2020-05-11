@@ -18,15 +18,17 @@
     precision mediump float;
 
     varying vec4 fragcolor;
-    varying vec3 position;
+    varying vec3 mvVertex;
     
     void main(void) {
-
-        vec3 U = dFdx(position); 
-        vec3 V = dFdy(position);   
+        vec3 light = vec3(30,20,-25);  //放在右邊，從上面照
+        vec3 lightColor = vec3(1.0);  //白色光
+        
+        vec3 U = dFdx(mvVertex); 
+        vec3 V = dFdy(mvVertex);   
 
         vec3 faceNormal = normalize(cross(U,V));
-        vec3 L = normalize(light - position);
+        vec3 L = normalize(light - mvVertex);
         vec3 H = normalize(L+V);
 
         float ka = 0.1;
@@ -41,15 +43,15 @@
 
         float cosAlpha = max(dot(H, faceNormal), 0.0);
         vec3 specular = lightColor * ks * pow(cosAlpha, 16.0); 
-        if(dot(L, N)<0.0){
+        if(dot(L, faceNormal)<0.0){
             specular = vec3(0.0);
         }
 
-        vec3 flat =  vec3(0.0); 
-        flat = ambient + diffuse + specular;
+        vec3 flat_light =  vec3(0.0); 
+        flat_light = ambient + diffuse + specular;
 
 
-        gl_FragColor = vec4(flat, 1.0);
+        gl_FragColor = vec4(flat_light, 1.0);
     }
 </script>
 
@@ -74,17 +76,15 @@
     uniform mat4 uPMatrix;
 
 	varying vec4 fragcolor;
-    varying vec3 position;
+    varying vec3 mvVertex;
 
 
     void main(void) {
         fragcolor = vec4(aFrontColor.rgb, 1.0);
-        vec3 light = vec3(30,20,-25);  //放在右邊，從上面照
-        vec3 lightColor = vec3(1.0);  //白色光
-        
 
+        mvVertex = (uMVMatrix * vec4(aVertexPosition, 1.0)).xyz; 
         gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-        position = gl_Position.xyz;
+        
     }
 </script>
 
@@ -118,7 +118,7 @@
         if(!gl.getExtension('OES_standard_derivatives')) {
             throw 'extension not support';
         }
-Reference
+
     }
 
     function getShader(gl, id) {
