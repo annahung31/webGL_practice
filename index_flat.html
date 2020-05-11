@@ -17,7 +17,8 @@
 
     varying vec3 mvVertex;
     varying vec4 fragcolor;
-
+    varying vec3 mvVertex;
+    
     void main(void) {
         vec3 U = dFdx(mvVertex);
         vec3 V = dFdy(mvVertex);
@@ -25,6 +26,18 @@
         
 
 
+        vec3 light = vec3(30,20,-25);  //放在右邊，從上面照
+        vec3 lightColor = vec3(1.0);  //白色光
+
+        vec3 U = dFdx(mvVertex); 
+        vec3 V = dFdy(mvVertex);   
+        N = normalize(cross(U,V));
+        float brightness = max(dot(normalize(position - light), frag_Normal1), 0.0);
+
+        float ka = 0.1;
+        float kd = 0.6;
+        float ks = 0.3;
+        vec3 ambient = lightColor * ka * fragcolor;
 
         gl_FragColor = fragcolor;
     }
@@ -45,6 +58,7 @@
     attribute vec3 aVertexPosition;
     attribute vec3 aFrontColor;
     attribute vec3 aVertexNormal;
+
 
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
