@@ -15,9 +15,17 @@
 <script id="fragmentShader" type="fragment">
     precision mediump float;
 
+    varying vec3 mvVertex;
     varying vec4 fragcolor;
 
     void main(void) {
+        vec3 U = dFdx(mvVertex);
+        vec3 V = dFdy(mvVertex);
+        N = normalize(cross(U, V));
+        
+
+
+
         gl_FragColor = fragcolor;
     }
 </script>
@@ -36,15 +44,20 @@
     
     attribute vec3 aVertexPosition;
     attribute vec3 aFrontColor;
+    attribute vec3 aVertexNormal;
 
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
 
+
+    varying vec3 mvVertex;
 	varying vec4 fragcolor;
 
     void main(void) {
         // fragcolor = vec4(aFrontColor.rgb, 1.0);
-        fragcolor = vec4(0.5, 0.6, 0.4, 1.0);
+        mvVertex = (uMVMatrix * vec4(aVertexPosition, 1.0)).xyz; 
+        
+
         gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
     }
 </script>
