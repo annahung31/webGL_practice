@@ -24,11 +24,26 @@
         vec3 light = vec3(30,20,-25);
         vec3 lightColor = vec3(1.0, 0.0, 0.0); 
         
+        vec3 light1 = vec3(-30,20,-25);
+        vec3 lightColor1 = vec3(0.0, 1.0, 0.0); 
+
+        vec3 light2 = vec3(0,20,-25);
+        vec3 lightColor2 = vec3(0.0, 0.0, 1.0); 
+
+
         // V,N,L,H (都要是單位向量)
         vec3 V = -normalize(mvVertex);
         vec3 N = normalize(mvNormal);
         vec3 L = normalize(light - mvVertex);
         vec3 H = normalize(L+V);
+
+        vec3 L1 = normalize(light1 - mvVertex);
+        vec3 H1 = normalize(L1+V);
+
+        vec3 L2 = normalize(light2 - mvVertex);
+        vec3 H2 = normalize(L2+V);
+
+
     
         //參數可以自由調整，表示三種light 的比重
         float ka = 0.5;
@@ -38,17 +53,45 @@
         // gouraud = ambient + diffuse + specular （需要三種光源）
         vec3 ambient = lightColor * ka * forntColor;
 
+
+        // diffuse light for three light sources
         float cos = max(dot(L, N), 0.0); // 得到 L 和 N 的夾角。避免負數
         vec3 diffuse = lightColor * kd * cos * forntColor;
 
+
+        float cos1 = max(dot(L1, N), 0.0); // 得到 L 和 N 的夾角。避免負數
+        vec3 diffuse1 = lightColor1 * kd * cos1 * forntColor;
+
+        float cos2 = max(dot(L2, N), 0.0); // 得到 L 和 N 的夾角。避免負數
+        vec3 diffuse2 = lightColor2 * kd * cos2 * forntColor;
+
+
+
+        // specular light for three light sources
         float cosAlpha = max(dot(H, N), 0.0);
         vec3 specular = lightColor * ks * pow(cosAlpha, 16.0); //次方可以自己調整
         if(dot(L, N)<0.0){
             specular = vec3(0.0);
         }
 
+        float cosAlpha1 = max(dot(H1, N), 0.0);
+        vec3 specular1 = lightColor1 * ks * pow(cosAlpha1, 16.0); //次方可以自己調整
+        if(dot(L1, N)<0.0){
+            specular1 = vec3(0.0);
+        }
+
+        float cosAlpha2 = max(dot(H2, N), 0.0);
+        vec3 specular2 = lightColor2 * ks * pow(cosAlpha2, 16.0); //次方可以自己調整
+        if(dot(L2, N)<0.0){
+            specular2 = vec3(0.0);
+        }
+
+
+
+
         vec3 phong =  vec3(0.0); //把vector 三個數值都設為0
-        phong = ambient + diffuse + specular;
+        phong = ambient + diffuse + diffuse1 + diffuse2  
+                        + specular + specular1 + specular2;
 
         gl_FragColor = vec4(phong, 1.0);
     }
