@@ -9,6 +9,26 @@ This practice is based on Homework 1 of ICG@NTU.
 
 ## Code Notes
 
+
+
+### Shear
+做 shearing 時，是把原本 matrix 乘上一個 shear matrix:
+```
+mat4.multiply(mvMatrix, [1, x_shear / 90, 0, 0, 
+    0, 1, y_shear / 90, 0, 
+    z_shear / 90, 0, 1, 0,
+    0, 0, 0, 1]);
+
+```
+
+那就可以拿 mat4.multiply 改寫成 mat4.shear來使用。
+將 mat4.multiply function 中，對應的位置分別改成０或 1 或 shear 的值，
+使 mat4.shear(mvMatrix, [x_shear, y_shear, z_shear]) 等於上方的操作。
+
+
+
+
+### Translate
 ```
 function initShaders() {
     var fragmentShader = getShader(gl, "fragmentShader"); //初始化摻數
@@ -134,7 +154,8 @@ gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute,
 
 * 如果要用多盞光源，可以用for 迴圈分別計算三種光源的特性。但要注意的是，ambient light 不管光源有多少盞都是定值，不能多重加總。因為 ambient light 本來就是用來模擬光經過多重反射後的結果。
 
-
+### Flat Shading
+在 flat shading 中，每個三角形有一個共通的法向量，填成同一個顏色，因此實作時，會在 `fragmentShader`中先求頂點x,y方向微分值，再由兩個微分值 cross 得到 faceNormal 平面法向量帶入 reflection model。
 
 
 ## Result
