@@ -355,7 +355,7 @@
         mat4.translate(mvMatrix, [-40, 0, -80]);
         mat4.rotate(mvMatrix, degToRad(teapotAngle), [0, 1, 0]); //
         mat4.scale(mvMatrix, [1,2,1])
-        mat4.shear(mvMatrix, [0, 0, 0]);  //y, x, z
+        mat4.shear(mvMatrix, [0, 0, 0]);  //x, y, z
 
         setMatrixUniforms();
         gl.drawArrays(gl.TRIANGLES, 0, teapotVertexPositionBuffer.numItems);
