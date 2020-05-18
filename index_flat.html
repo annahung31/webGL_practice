@@ -22,14 +22,28 @@
     
     void main(void) {
         vec3 light = vec3(30,20,-25);  //放在右邊，從上面照
-        vec3 lightColor = vec3(1.0);  //白色光
-        
+        vec3 lightColor = vec3(1.0, 0, 0) * 0.5;  //白色光
+
+        vec3 light1 = vec3(-30,20,-25);
+        vec3 lightColor1 = vec3(1.0, 0.0, 0.0)* 0.5; 
+
+        vec3 light2 = vec3(0,20,-25);
+        vec3 lightColor2 = vec3(1.0, 0.0, 0.0)* 0.5; 
+
+
+
         vec3 U = dFdx(mvVertex); 
         vec3 V = dFdy(mvVertex);   
 
         vec3 faceNormal = normalize(cross(U,V));
         vec3 L = normalize(light - mvVertex);
         vec3 H = normalize(L+V);
+
+        vec3 L1 = normalize(light1 - mvVertex);
+        vec3 H1 = normalize(L1+V);
+
+        vec3 L2 = normalize(light2 - mvVertex);
+        vec3 H2 = normalize(L2+V);
 
         float ka = 0.1;
         float kd = 0.6;
@@ -41,14 +55,37 @@
         float cos = max(dot(L, faceNormal), 0.0); 
         vec3 diffuse = lightColor * kd * fragcolor.rgb * cos;
 
+        float cos1 = max(dot(L1, faceNormal), 0.0); 
+        vec3 diffuse1 = lightColor1 * kd * fragcolor.rgb * cos1;
+
+        float cos2 = max(dot(L2, faceNormal), 0.0); 
+        vec3 diffuse2 = lightColor2 * kd * fragcolor.rgb * cos2;
+
+
+
         float cosAlpha = max(dot(H, faceNormal), 0.0);
         vec3 specular = lightColor * ks * pow(cosAlpha, 16.0); 
         if(dot(L, faceNormal)<0.0){
             specular = vec3(0.0);
         }
 
+        float cosAlpha1 = max(dot(H1, faceNormal), 0.0);
+        vec3 specular1 = lightColor1 * ks * pow(cosAlpha1, 16.0); 
+        if(dot(L1, faceNormal)<0.0){
+            specular1 = vec3(0.0);
+        }
+
+        float cosAlpha2 = max(dot(H2, faceNormal), 0.0);
+        vec3 specular2 = lightColor2 * ks * pow(cosAlpha2, 16.0); 
+        if(dot(L2, faceNormal)<0.0){
+            specular2 = vec3(0.0);
+        }
+
+
+
         vec3 flat_light =  vec3(0.0); 
-        flat_light = ambient + diffuse + specular;
+        flat_light = ambient + diffuse + diffuse1 + diffuse2  
+                            + specular + specular1 + specular2;
 
 
         gl_FragColor = vec4(flat_light, 1.0);
@@ -244,7 +281,7 @@
 
         // Setup Model-View Matrix
         mat4.identity(mvMatrix);
-        mat4.translate(mvMatrix, [0, 0, -40]);
+        mat4.translate(mvMatrix, [0, 0, -80]);
         mat4.rotate(mvMatrix, degToRad(teapotAngle), [0, 1, 0]);
 
         setMatrixUniforms();
@@ -267,6 +304,29 @@
                                0, 
                                0);
 
+        gl.drawArrays(gl.TRIANGLES, 0, teapotVertexPositionBuffer.numItems);
+
+        // Setup Model-View Matrix
+        mat4.identity(mvMatrix);
+        mat4.translate(mvMatrix, [40, 0, -80]);
+        mat4.rotate(mvMatrix, degToRad(teapotAngle), [0, 1, 0]); //
+        mat4.scale(mvMatrix, [1,1,1])
+        mat4.shear(mvMatrix, [0, 45, 0]);  //y, x, z
+
+        setMatrixUniforms();
+        gl.drawArrays(gl.TRIANGLES, 0, teapotVertexPositionBuffer.numItems);
+
+
+
+
+        // Setup Model-View Matrix
+        mat4.identity(mvMatrix);
+        mat4.translate(mvMatrix, [-40, 0, -80]);
+        mat4.rotate(mvMatrix, degToRad(teapotAngle), [0, 1, 0]); //
+        mat4.scale(mvMatrix, [1,2,1])
+        mat4.shear(mvMatrix, [0, 0, 0]);  //x, y, z
+
+        setMatrixUniforms();
         gl.drawArrays(gl.TRIANGLES, 0, teapotVertexPositionBuffer.numItems);
     }
 
